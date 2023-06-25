@@ -1,7 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginAPI, registerAPI, loginUserWithGoogleAPI, registerUserWithGoogleAPI, logoutAPI, isAuthAPI, sendOtpAPI, resetPasswordAPI } from '../../api/auth/auth';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { auth } from '../../utils/firebase'
+import {
+  loginAPI, registerAPI, loginUserWithGoogleAPI,
+  registerUserWithGoogleAPI, logoutAPI, isAuthAPI,
+  sendResetPasswordOTPAPI, resetPasswordAPI,
+  sendVerifyUserOTPAPI, verifyUserAPI
+} from '../../api/auth/auth';
 
 
 const initialState = {
@@ -11,10 +16,10 @@ const initialState = {
   isLoading: false,
 }
 
+
 const login = createAsyncThunk('authSlice/login', async ({ email, password }, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   try {
-    //! we should put await , explained in lginUser file .
     const { data } = await loginAPI(email, password);
     return data
   } catch (error) {
@@ -65,11 +70,13 @@ const isAuth = createAsyncThunk('authSlice/isAuth', async (_, thunkAPI) => {
     return data;
   } catch (error) { return rejectWithValue(error.message) }
 })
-const sendOTP = createAsyncThunk('authSlice/sendOTP', async ({ email }, thunkAPI) => {
+
+//! ForgotPassword Feature
+const sendResetPasswordOTP = createAsyncThunk('authSlice/sendResetPasswordOTP', async ({ email }, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   try {
-    console.log('in sendotp thunk ', email);
-    const { data } = await sendOtpAPI(email);
+    console.log('in sendResetPasswordOTP thunk ', email);
+    const { data } = await sendResetPasswordOTPAPI(email);
     return data;
   } catch (error) {
     console.log(error);
@@ -90,6 +97,26 @@ const resetPassword = createAsyncThunk('authSlice/resetPassword', async ({ email
 
 })
 
+//! VerifyUser Feature 
+const sendVerifyUserOTP = createAsyncThunk('authSlice/sendVerifyUserOTP', async (_, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  try {
+    const { data } = await sendVerifyUserOTPAPI();
+    return data;
+  } catch (error) {
+    console.log(error);
+    return rejectWithValue(error.message)
+  }
+})
+
+const verifyUser = createAsyncThunk('authSlice/verifyUser', async ({ OTP }, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  try {
+    const { data } = await verifyUserAPI(OTP);
+    return data;
+  } catch (error) { return rejectWithValue(error.message) }
+})
+
 const authSlice = createSlice({
   name: 'authSlice',
   initialState,
@@ -106,7 +133,6 @@ const authSlice = createSlice({
       //Login 
       .addCase(login.pending, (state) => {
         state.isLoading = true;
-        state.user = null;
       })
       .addCase(login.fulfilled, (state, { payload }) => {
         state.isLoading = false;
@@ -121,7 +147,6 @@ const authSlice = createSlice({
       //Login with google 
       .addCase(loginWithGoogle.pending, (state) => {
         state.isLoading = true;
-        state.user = null;
       })
       .addCase(loginWithGoogle.fulfilled, (state, { payload }) => {
         state.isLoading = false;
@@ -136,7 +161,6 @@ const authSlice = createSlice({
       //regiser
       .addCase(register.pending, (state) => {
         state.isLoading = true;
-        state.user = null;
       })
       .addCase(register.fulfilled, (state, { payload }) => {
         state.isLoading = false;
@@ -151,7 +175,6 @@ const authSlice = createSlice({
       //registerWithGoogle with google 
       .addCase(registerWithGoogle.pending, (state) => {
         state.isLoading = true;
-        state.user = null;
       })
       .addCase(registerWithGoogle.fulfilled, (state, { payload }) => {
         state.isLoading = false;
@@ -166,7 +189,6 @@ const authSlice = createSlice({
       // logout 
       .addCase(logout.pending, (state) => {
         state.isLoading = true;
-        state.user = null;
       })
       .addCase(logout.fulfilled, (state, { payload }) => {
         state.isLoading = false;
@@ -175,14 +197,12 @@ const authSlice = createSlice({
       })
       .addCase(logout.rejected, (state, { payload }) => {
         state.isLoading = false;
-        state.user = null;
         state.error = payload;
       })
 
       // isAuth 
       .addCase(isAuth.pending, (state) => {
         state.isLoading = true;
-        state.user = null;
       })
       .addCase(isAuth.fulfilled, (state, { payload }) => {
         state.isLoading = false;
@@ -194,19 +214,17 @@ const authSlice = createSlice({
         state.error = payload;
       })
 
-      // sendOTP 
-      .addCase(sendOTP.pending, (state) => {
+      // sendResetPasswordOTP 
+      .addCase(sendResetPasswordOTP.pending, (state) => {
         state.isLoading = true;
-        state.user = null;
         state.message = "loading";
       })
-      .addCase(sendOTP.fulfilled, (state, { payload }) => {
+      .addCase(sendResetPasswordOTP.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.message = payload;
       })
-      .addCase(sendOTP.rejected, (state, { payload }) => {
+      .addCase(sendResetPasswordOTP.rejected, (state, { payload }) => {
         state.isLoading = false;
-        state.user = null;
         state.message = null;
         state.error = payload;
       })
@@ -214,7 +232,6 @@ const authSlice = createSlice({
       // resetPassword 
       .addCase(resetPassword.pending, (state) => {
         state.isLoading = true;
-        state.user = null;
         state.message = "loading";
       })
       .addCase(resetPassword.fulfilled, (state, { payload }) => {
@@ -223,7 +240,36 @@ const authSlice = createSlice({
       })
       .addCase(resetPassword.rejected, (state, { payload }) => {
         state.isLoading = false;
-        state.user = null;
+        state.message = null;
+        state.error = payload;
+      })
+
+      // sendVerifyUserOTP 
+      .addCase(sendVerifyUserOTP.pending, (state) => {
+        state.isLoading = true;
+        state.message = "loading";
+      })
+      .addCase(sendVerifyUserOTP.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.message = payload;
+      })
+      .addCase(sendVerifyUserOTP.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.message = null;
+        state.error = payload;
+      })
+
+      // verifyUser 
+      .addCase(verifyUser.pending, (state) => {
+        state.isLoading = true;
+        state.message = "loading";
+      })
+      .addCase(verifyUser.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.message = payload;
+      })
+      .addCase(verifyUser.rejected, (state, { payload }) => {
+        state.isLoading = false;
         state.message = null;
         state.error = payload;
       })
@@ -232,4 +278,8 @@ const authSlice = createSlice({
 
 export default authSlice.reducer;
 export const { reset } = authSlice.actions;
-export { login, register, loginWithGoogle, registerWithGoogle, logout, isAuth, sendOTP, resetPassword };
+export {
+  login, register, loginWithGoogle, registerWithGoogle,
+  logout, isAuth, sendResetPasswordOTP, resetPassword,
+  verifyUser, sendVerifyUserOTP
+};

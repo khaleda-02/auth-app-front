@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux"
 import { Routes, Route } from 'react-router-dom'
 import { isAuth } from './features/auth/authSlice'
 import { Footer, Navbar } from "./components"
-import { ProfilePage, HomePage, LoginPage, NotFoundPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage } from "./pages"
+import { ProfilePage, HomePage, LoginPage, NotFoundPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage, VerifyUserPage } from "./pages"
 import ProtectedRoute from "./utils/ProtectedRoute"
 
 function App() {
@@ -24,6 +24,7 @@ function App() {
           </ProtectedRoute>} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/register' element={<RegisterPage />} />
+        <Route path='/verify' element={<VerifyUserPage />} />
         <Route path='/forgot-password' element={<ForgotPasswordPage />} />
         <Route path='/forgot-password/:email/reset' element={<ResetPasswordPage />} />
         <Route path='*' element={<NotFoundPage />} />

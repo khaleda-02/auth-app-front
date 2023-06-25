@@ -30,7 +30,7 @@ const LoginPage = () => {
 
   //calling the loginWithGoogle 
   const loginWithGoogleHandler = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     dispatch(loginWithGoogle())
       .unwrap().then(() => { navigate('/', { replace: true }) });
   }
