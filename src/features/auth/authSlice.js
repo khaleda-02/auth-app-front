@@ -1,14 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginUser, registerUser, loginUserWithGoogle, registerUserWithGoogle } from '../../api/auth/auth';
+import { loginAPI, registerAPI, loginUserWithGoogleAPI, registerUserWithGoogleAPI, logoutAPI, isAuthAPI, sendOtpAPI, resetPasswordAPI } from '../../api/auth/auth';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { auth } from '../../utils/firebase'
 
-// get the user from localstorge 
-const user = JSON.parse(localStorage.getItem('user')) || null;
-console.log(user)
+
 const initialState = {
-  user,
+  user: null,
   error: null,
+  message: null,
   isLoading: false,
 }
 
@@ -16,8 +15,7 @@ const login = createAsyncThunk('authSlice/login', async ({ email, password }, th
   const { rejectWithValue } = thunkAPI;
   try {
     //! we should put await , explained in lginUser file .
-    const { data } = await loginUser(email, password);
-    localStorage.setItem("user", JSON.stringify(data));
+    const { data } = await loginAPI(email, password);
     return data
   } catch (error) {
     return rejectWithValue(error.message);
@@ -28,8 +26,7 @@ const loginWithGoogle = createAsyncThunk('authSlice/loginWithGoogle', async (_, 
   const { rejectWithValue } = thunkAPI;
   try {
     const { user } = await signInWithPopup(auth, new GoogleAuthProvider());
-    const { data } = await loginUserWithGoogle(user.accessToken);
-    localStorage.setItem("user", JSON.stringify(data));
+    const { data } = await loginUserWithGoogleAPI(user.accessToken);
     return data;
   } catch (err) { return rejectWithValue(err.message); }
 })
@@ -37,8 +34,7 @@ const loginWithGoogle = createAsyncThunk('authSlice/loginWithGoogle', async (_, 
 const register = createAsyncThunk('authSlice/register', async ({ username, email, password }, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   try {
-    const { data } = await registerUser(username, email, password);
-    localStorage.setItem("user", JSON.stringify(data));
+    const { data } = await registerAPI(username, email, password);
     return data;
   } catch (error) {
     return rejectWithValue(error.message);
@@ -50,18 +46,55 @@ const registerWithGoogle = createAsyncThunk('authSlice/registerWithGoogle', asyn
   const { rejectWithValue } = thunkAPI;
   try {
     const { user } = await signInWithPopup(auth, new GoogleAuthProvider());
-    const { data } = await registerUserWithGoogle(user.accessToken);
-    localStorage.setItem("user", JSON.stringify(data));
+    const { data } = await registerUserWithGoogleAPI(user.accessToken);
     return data;
-  } catch (err) { return rejectWithValue(err.message); }
+  } catch (error) { return rejectWithValue(error.message); }
+})
+
+const logout = createAsyncThunk('authSlice/logout', async (_, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  try {
+    const { data } = await logoutAPI();
+    return data;
+  } catch (error) { return rejectWithValue(error.message) }
+})
+const isAuth = createAsyncThunk('authSlice/isAuth', async (_, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  try {
+    const { data } = await isAuthAPI();
+    return data;
+  } catch (error) { return rejectWithValue(error.message) }
+})
+const sendOTP = createAsyncThunk('authSlice/sendOTP', async ({ email }, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  try {
+    console.log('in sendotp thunk ', email);
+    const { data } = await sendOtpAPI(email);
+    return data;
+  } catch (error) {
+    console.log(error);
+    return rejectWithValue(error.message)
+  }
+})
+
+const resetPassword = createAsyncThunk('authSlice/resetPassword', async ({ email, OTP, newPassword }, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  try {
+    const { data } = await resetPasswordAPI(email, OTP, newPassword);
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+    return rejectWithValue(error.message)
+  }
+
 })
 
 const authSlice = createSlice({
   name: 'authSlice',
   initialState,
   reducers: {
-    logOut: (state) => {
-      localStorage.removeItem('user');
+    reset: (state) => {
       state.user = null;
       state.isLoading = false;
       state.error = null;
@@ -129,9 +162,74 @@ const authSlice = createSlice({
         state.error = payload;
         state.user = null;
       })
+
+      // logout 
+      .addCase(logout.pending, (state) => {
+        state.isLoading = true;
+        state.user = null;
+      })
+      .addCase(logout.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.user = null;
+        state.err = null;
+      })
+      .addCase(logout.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.user = null;
+        state.error = payload;
+      })
+
+      // isAuth 
+      .addCase(isAuth.pending, (state) => {
+        state.isLoading = true;
+        state.user = null;
+      })
+      .addCase(isAuth.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.user = payload;
+      })
+      .addCase(isAuth.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.user = null;
+        state.error = payload;
+      })
+
+      // sendOTP 
+      .addCase(sendOTP.pending, (state) => {
+        state.isLoading = true;
+        state.user = null;
+        state.message = "loading";
+      })
+      .addCase(sendOTP.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.message = payload;
+      })
+      .addCase(sendOTP.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.user = null;
+        state.message = null;
+        state.error = payload;
+      })
+
+      // resetPassword 
+      .addCase(resetPassword.pending, (state) => {
+        state.isLoading = true;
+        state.user = null;
+        state.message = "loading";
+      })
+      .addCase(resetPassword.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.message = payload;
+      })
+      .addCase(resetPassword.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.user = null;
+        state.message = null;
+        state.error = payload;
+      })
   }
 })
 
 export default authSlice.reducer;
-export const { logOut } = authSlice.actions;
-export { login, register, loginWithGoogle, registerWithGoogle };
+export const { reset } = authSlice.actions;
+export { login, register, loginWithGoogle, registerWithGoogle, logout, isAuth, sendOTP, resetPassword };

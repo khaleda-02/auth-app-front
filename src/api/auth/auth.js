@@ -1,19 +1,28 @@
 import api from '../client'
 
-const loginUser = async (email, password) => {
-  //! the await is for waiting the res from the request .
-  return await api.post('/api/auth/login', { email, password })
-  //! it will return a promise . that contains the case (fulfilled , , ) and the data , and we need to hadnle the promise with await in the slice .
+const loginAPI = async (email, password) => {
+  return await api.post('/api/auth/login', { email, password });
 }
-const loginUserWithGoogle = async (accessToken) => {
-  return await api.post('/api/auth/login', { googleToken: accessToken })
+const loginUserWithGoogleAPI = async (accessToken) => {
+  return await api.post('/api/auth/login', { googleToken: accessToken });
+}
+const registerAPI = async (username, email, password) => {
+  return await api.post('/api/auth/register', { username, email, password });
+}
+const registerUserWithGoogleAPI = async (accessToken) => {
+  return await api.post('/api/auth/register', { googleToken: accessToken });
+}
+const logoutAPI = async () => {
+  return await api.get('/api/auth/logout');
+}
+const isAuthAPI = async () => {
+  return await api.get('/api/auth/isauth');
+}
+const sendOtpAPI = async (email) => {
+  return await api.post('/api/auth/forgot-password/', { email });
+}
+const resetPasswordAPI = async (email, OTP, newPassword) => {
+  return await api.post('/api/auth/forgot-password/reset', { email, OTP, newPassword });
 }
 
-const registerUser = async (username, email, password) => {
-  return await api.post('/api/auth/register', { username, email, password })
-}
-const registerUserWithGoogle = async (accessToken) => {
-  return await api.post('/api/auth/register', { googleToken: accessToken })
-}
-
-export { loginUser, registerUser, loginUserWithGoogle, registerUserWithGoogle }
+export { loginAPI, registerAPI, loginUserWithGoogleAPI, registerUserWithGoogleAPI, logoutAPI, isAuthAPI, sendOtpAPI, resetPasswordAPI }

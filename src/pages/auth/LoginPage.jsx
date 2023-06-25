@@ -4,10 +4,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { login, loginWithGoogle } from '../../features/auth/authSlice'
 import Input from '../../components/formComponents/Input'
 import { FcGoogle } from 'react-icons/fc'
-import { BsFacebook } from 'react-icons/bs'
 
 
 const LoginPage = () => {
+  // state for remmber me check box . 
   const [isChecked, setIsChecked] = useState(false);
 
   const dispatch = useDispatch();
@@ -27,7 +27,6 @@ const LoginPage = () => {
     emailRef.current.value = null;
     passwordRef.current.value = null;
   }
-
 
   //calling the loginWithGoogle 
   const loginWithGoogleHandler = (e) => {
@@ -62,7 +61,7 @@ const LoginPage = () => {
                 <div className="form-control">
                   <label className="cursor-pointer label">
                     <span className="label-text capitalize  ">
-                      <Link to='/' className='hover:pb-[1px] border-b-2 border-solid border-gray-200'>
+                      <Link to='/forgot-password' className='hover:pb-[1px] border-b-2 border-solid border-gray-200'>
                         forgot password
                       </Link>
                     </span>
@@ -74,7 +73,6 @@ const LoginPage = () => {
             <div className="divider lg:divider-horizontal text-black after:bg-gray-white before:bg-gray-white">OR</div>
             <div className='w-full md:w-[80]md:mx-auto lg:w-[40%] '>
               <button onClick={loginWithGoogleHandler} disabled={isLoading} className="btn btn-outline w-full capitalize mx-2 my-4 flex items-center justify-center gap-2"><FcGoogle size={23} /> sign in with goooogle </button>
-              <button onClick={loginWithGoogleHandler} disabled={isLoading} className="btn btn-outline w-full capitalize mx-2 my-4 flex items-center justify-center gap-2 "><BsFacebook className='text-[#4267B2]' size={23} /> sign in with facebook </button>
               <Link to="/register" className="btn btn-outline w-full capitalize mx-2 my-4 flex items-center justify-center gap-2">if your aren't a user , register!</Link>
             </div>
           </div>

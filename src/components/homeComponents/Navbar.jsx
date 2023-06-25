@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux';
-import { reset } from '../../features/auth/authSlice';
+import { logout } from '../../features/auth/authSlice';
 
 const Navbar = () => {
   const { user } = useSelector(state => state.auth)
@@ -9,7 +9,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const logOutHandler = () => {
-    dispatch(reset()).unwrap().then(() => navigate('/', { replace: true }));
+    dispatch(logout()).unwrap().then(() => navigate('/', { replace: true }));
   }
   return (
     <div className="navbar bg-base-100">

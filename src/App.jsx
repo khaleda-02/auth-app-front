@@ -1,15 +1,21 @@
-import { Footer, Navbar } from "./components"
-import { ProfilePage, HomePage, LoginPage, NotFoundPage, RegisterPage } from "./pages/"
+import { useEffect } from "react"
+import { useDispatch } from "react-redux"
 import { Routes, Route } from 'react-router-dom'
+import { isAuth } from './features/auth/authSlice'
+import { Footer, Navbar } from "./components"
+import { ProfilePage, HomePage, LoginPage, NotFoundPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage } from "./pages"
 import ProtectedRoute from "./utils/ProtectedRoute"
 
 function App() {
-  //TODO: first check if there is a cookie contain a taoken , 
-  //TODO: then  call isauth endpoint , and check of the token 
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(isAuth());
+  }, [])
+
   return (
     <div className="">
       <Navbar />
-      {console.log('in app')}
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/profile' element={
@@ -18,6 +24,8 @@ function App() {
           </ProtectedRoute>} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/register' element={<RegisterPage />} />
+        <Route path='/forgot-password' element={<ForgotPasswordPage />} />
+        <Route path='/forgot-password/:email/reset' element={<ResetPasswordPage />} />
         <Route path='*' element={<NotFoundPage />} />
       </Routes>
       <Footer />

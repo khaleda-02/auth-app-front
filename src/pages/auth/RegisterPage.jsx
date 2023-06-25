@@ -78,7 +78,6 @@ const RegisterPage = () => {
             <div className="divider lg:divider-horizontal text-black after:bg-gray-white before:bg-gray-white">OR</div>
             <div className='w-full md:w-[80]md:mx-auto lg:w-[40%] '>
               <button onClick={registerWithGoogleHandler} className="btn btn-outline w-full capitalize mx-2 my-4 flex items-center justify-center gap-2"><FcGoogle size={23} /> register with goooogle </button>
-              <button className="btn btn-outline w-full capitalize mx-2 my-4 flex items-center justify-center gap-2 "><BsFacebook className='text-[#4267B2]' size={23} /> register with facebook </button>
               <Link to="/login" className="btn btn-outline w-full capitalize mx-2 my-4 flex items-center justify-center gap-2">if your are a user , login!</Link>
             </div>
           </div>
