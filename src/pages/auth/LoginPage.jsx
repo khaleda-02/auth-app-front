@@ -33,7 +33,6 @@ const LoginPage = () => {
     e.preventDefault();
     dispatch(loginWithGoogle())
       .unwrap().then(() => { navigate('/', { replace: true }) });
-      
   }
 
   return (
