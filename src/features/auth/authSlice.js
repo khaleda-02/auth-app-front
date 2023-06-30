@@ -104,7 +104,6 @@ const sendVerifyUserOTP = createAsyncThunk('authSlice/sendVerifyUserOTP', async 
     const { data } = await sendVerifyUserOTPAPI();
     return data;
   } catch (error) {
-    console.log(error);
     return rejectWithValue(error.message)
   }
 })
@@ -211,7 +210,6 @@ const authSlice = createSlice({
       .addCase(isAuth.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.user = null;
-        state.error = payload;
       })
 
       // sendResetPasswordOTP 
