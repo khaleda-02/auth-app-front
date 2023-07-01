@@ -68,7 +68,9 @@ const isAuth = createAsyncThunk('authSlice/isAuth', async (_, thunkAPI) => {
   try {
     const { data } = await isAuthAPI();
     return data;
-  } catch (error) { return rejectWithValue(error.message) }
+  } catch (error) { 
+    console.log(error);
+    return rejectWithValue(error.message) }
 })
 
 //! ForgotPassword Feature
@@ -136,6 +138,7 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.user = payload;
+        //! ---------------------------------------------------------------------------
       })
       .addCase(login.rejected, (state, { payload }) => {
         state.isLoading = false;
@@ -150,6 +153,7 @@ const authSlice = createSlice({
       .addCase(loginWithGoogle.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.user = payload;
+        //! ---------------------------------------------------------------------------
       })
       .addCase(loginWithGoogle.rejected, (state, { payload }) => {
         state.isLoading = false;
@@ -164,6 +168,7 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.user = payload;
+        //! ---------------------------------------------------------------------------
       })
       .addCase(register.rejected, (state, { payload }) => {
         state.isLoading = false;
@@ -178,6 +183,7 @@ const authSlice = createSlice({
       .addCase(registerWithGoogle.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.user = payload;
+        //! ---------------------------------------------------------------------------
       })
       .addCase(registerWithGoogle.rejected, (state, { payload }) => {
         state.isLoading = false;
@@ -190,6 +196,7 @@ const authSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(logout.fulfilled, (state, { payload }) => {
+        //! ---------------------------------------------------------------------------
         state.isLoading = false;
         state.user = null;
         state.err = null;
@@ -206,6 +213,7 @@ const authSlice = createSlice({
       .addCase(isAuth.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.user = payload;
+        //! ---------------------------------------------------------------------------
       })
       .addCase(isAuth.rejected, (state, { payload }) => {
         state.isLoading = false;
