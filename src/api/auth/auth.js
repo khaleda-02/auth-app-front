@@ -16,7 +16,6 @@ const logoutAPI = async () => {
   return await api.get('/api/auth/logout');
 }
 const isAuthAPI = async () => {
-  console.log(Cookies.get('token'), 'in isauthApi');
   return await api.get('/api/auth/isauth', {
     headers: {
       Authorization: `Bearer ${Cookies.get('token')}`

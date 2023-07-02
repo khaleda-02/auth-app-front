@@ -24,7 +24,6 @@ const login = createAsyncThunk('authSlice/login', async ({ email, password }, th
     const { data } = await loginAPI(email, password);
     return data
   } catch (error) {
-    console.log(error);
     return rejectWithValue(error.response.data.message || error.message);
   }
 })
@@ -71,7 +70,6 @@ const isAuth = createAsyncThunk('authSlice/isAuth', async (_, thunkAPI) => {
     const { data } = await isAuthAPI();
     return data;
   } catch (error) {
-    console.log(error);
     return rejectWithValue(error.response.data.message || error.message)
   }
 })
@@ -80,7 +78,6 @@ const isAuth = createAsyncThunk('authSlice/isAuth', async (_, thunkAPI) => {
 const sendResetPasswordOTP = createAsyncThunk('authSlice/sendResetPasswordOTP', async ({ email }, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   try {
-    console.log('in sendResetPasswordOTP thunk ', email);
     const { data } = await sendResetPasswordOTPAPI(email);
     return data;
   } catch (error) {
@@ -92,10 +89,8 @@ const resetPassword = createAsyncThunk('authSlice/resetPassword', async ({ email
   const { rejectWithValue } = thunkAPI;
   try {
     const { data } = await resetPasswordAPI(email, OTP, newPassword);
-    console.log(data);
     return data;
   } catch (error) {
-    console.log(error);
     return rejectWithValue(error.response.data.message || error.message)
   }
 
