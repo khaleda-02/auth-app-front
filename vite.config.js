@@ -9,9 +9,9 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  server: {
-    proxy: {
-      '/api': "https://express-auth-app-back.onrender.com"
-    }
-  }
+  // server: {
+  //   proxy: {
+  //     '/api': "https://express-auth-app-back.onrender.com"
+  //   }
+  // }
 })

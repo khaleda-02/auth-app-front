@@ -1,5 +1,5 @@
 import api from '../client'
-
+import Cookies from 'js-cookie';
 const loginAPI = async (email, password) => {
   return await api.post('/api/auth/login', { email, password });
 }
@@ -16,15 +16,29 @@ const logoutAPI = async () => {
   return await api.get('/api/auth/logout');
 }
 const isAuthAPI = async () => {
-  return await api.get('/api/auth/isauth');
+  console.log(Cookies.get('token'), 'in isauthApi');
+  return await api.get('/api/auth/isauth', {
+    headers: {
+      Authorization: `Bearer ${Cookies.get('token')}`
+    }
+  });
 }
 
 //! VerifyUser Feature 
 const sendVerifyUserOTPAPI = async () => {
-  return await api.get('/api/auth/verify/');
+  return await api.get('/api/auth/verify/', {
+    headers: {
+      Authorization: `Bearer ${Cookies.get('token')}`
+    }
+  });
 }
+
 const verifyUserAPI = async (OTP) => {
-  return await api.post('/api/auth/verify/', { OTP });
+  return await api.post('/api/auth/verify/', { OTP }, {
+    headers: {
+      Authorization: `Bearer ${Cookies.get('token')}`
+    }
+  });
 }
 
 //! ForgotPassword Feature 
