@@ -1,7 +1,6 @@
 import axios from "axios"
 const api = axios.create({
-  baseURL: "https://express-auth-app-back.onrender.com",
-  // baseURL: "http://localhost:3001/",
+  baseURL: import.meta.env.VITE_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   }
